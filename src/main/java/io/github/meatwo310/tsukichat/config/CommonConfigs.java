@@ -16,6 +16,8 @@ public class CommonConfigs {
     public static ForgeConfigSpec.ConfigValue<String> formatConverted;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginalIgnored;
     public static ForgeConfigSpec.ConfigValue<String> formatConvertedIgnored;
+    public static ForgeConfigSpec.ConfigValue<String> ignoreTag;
+    public static ForgeConfigSpec.ConfigValue<String> ignoreCompletelyTag;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -25,7 +27,7 @@ public class CommonConfigs {
                         "無効にすると、ローマ字変換のみ行います。")
                 .define("transliterate", true);
         ignoreNonAscii = builder
-                .comment("ASCII文字以外を含むメッセージのローマ字変換を無視するかどうか。\n" +
+                .comment("ASCII文字以外を含むメッセージのローマ字変換と日本語変換を無視するかどうか。\n" +
                         "このオプションは、マークダウン変換を行うかどうかに影響しません。")
                 .define("ignore_non_ascii", true);
         ampersand = builder
@@ -37,7 +39,7 @@ public class CommonConfigs {
                 .define("markdown", true);
 
         ignore = builder
-                .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換を行いません。\n" +
+                .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
                         "ただし、マークダウンの変換は行われます。")
                 .defineList("ignore", List.of("!", "#", ";"), o -> o instanceof String);
         ignoreCompletely = builder
@@ -60,6 +62,14 @@ public class CommonConfigs {
                 .comment("コンフィグignoreで設定された接頭辞から始まるメッセージがMarkdown変換された際にどう表示するかを指定します。\n" +
                         "$0は接頭辞、$1は変換後のメッセージのうち接頭辞以外の部分に置き換えられます。")
                 .define("format_converted_ignored", "→ §7$0§r$1§r");
+
+        ignoreTag = builder
+                .comment("TsukiChatは、以下のタグを持つプレイヤーのメッセージのローマ字変換や日本語変換を行いません。\n" +
+                        "ただし、マークダウンの変換は行われます。")
+                .define("ignore_tag", "tsukichat_no_romaji");
+        ignoreCompletelyTag = builder
+                .comment("TsukiChatは、以下のタグを持つプレイヤーのメッセージについて、一切の変換を行いません。")
+                .define("ignore_completely_tag", "tsukichat_ignore");
 
         COMMON_SPEC = builder.build();
     }
