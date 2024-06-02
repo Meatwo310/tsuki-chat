@@ -1,7 +1,10 @@
 package io.github.meatwo310.tsukichat;
 
 import com.mojang.logging.LogUtils;
+import io.github.meatwo310.tsukichat.config.CommonConfigs;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ public class TsukiChat {
 
     public TsukiChat() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfigs.COMMON_SPEC);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
