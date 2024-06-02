@@ -1,6 +1,10 @@
 # Tsuki Chat
+
 A Minecraft MOD that converts Romaji to Japanese in chat. Highly inspired by the LunaChat plugin.  
 チャットに送信されたローマ字を自動的に日本語に変換するMOD。LunaChatに強く影響されています。
+
+![banner](https://github.com/Meatwo310/tsuki-chat/assets/72017364/bf0137b5-94d6-4a6f-8a58-7549dda8d4b0)
+
 
 ## 機能
 - 送信されたローマ字をひらがなに変換し、Google CGI APIを用いて非同期で日本語に変換します。
