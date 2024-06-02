@@ -10,6 +10,7 @@ public class CommonConfigs {
     public static ForgeConfigSpec.BooleanValue ignoreNonAscii;
     public static ForgeConfigSpec.BooleanValue ampersand;
     public static ForgeConfigSpec.BooleanValue markdown;
+    public static ForgeConfigSpec.BooleanValue allowPersonalSettings;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreCompletely;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginal;
@@ -37,6 +38,10 @@ public class CommonConfigs {
                 .comment("単純なマークダウンを装飾コードに変換するかどうか。\n" +
                         "複雑なマークダウンはうまく変換されない場合があります。")
                 .define("markdown", true);
+        allowPersonalSettings = builder
+                .comment("プレイヤーが /tsukichat で個人設定を変更できるようにするかどうか。\n" +
+                        "無効にした場合でも、ignoreTagとignoreCompletelyTagは使用されます。")
+                .define("allow_personal_settings", true);
 
         ignore = builder
                 .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
@@ -70,6 +75,8 @@ public class CommonConfigs {
         ignoreCompletelyTag = builder
                 .comment("TsukiChatは、以下のタグを持つプレイヤーのメッセージについて、一切の変換を行いません。")
                 .define("ignore_completely_tag", "tsukichat_ignore");
+
+
 
         COMMON_SPEC = builder.build();
     }

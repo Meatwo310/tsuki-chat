@@ -13,30 +13,39 @@ import net.minecraft.world.entity.player.Player;
 import java.util.Set;
 
 public class TsukiChatCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher){
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tsukichat").executes(TsukiChatCommand::execute));
     }
-    private static int execute(CommandContext<CommandSourceStack> command){
-        if (command.getSource().getEntity() instanceof Player player){
-            Set<String> tags = player.getTags();
-            String ignoreCompletelyTag = CommonConfigs.ignoreCompletelyTag.get();
-            String ignoreTag = CommonConfigs.ignoreTag.get();
 
-            StringBuilder message = new StringBuilder("§e[TsukiChat]§r 個人設定を変更しました: ");
-            if (tags.contains(ignoreCompletelyTag)) {
-                tags.remove(ignoreCompletelyTag);
-                tags.remove(ignoreTag);
-                message.append("§a有効§r");
-            } else if (tags.contains(ignoreTag)) {
-                tags.remove(ignoreTag);
-                tags.add(ignoreCompletelyTag);
-                message.append("§c無効§r");
-            } else {
-                tags.add(ignoreTag);
-                message.append("§eMarkdownのみ§r");
-            }
-            player.sendMessage(new TextComponent(message.toString()), Util.NIL_UUID);
+    private static int execute(CommandContext<CommandSourceStack> command) {
+        Player player = (Player) command.getSource().getEntity();
+
+        if (!(player instanceof Player)) return Command.SINGLE_SUCCESS;
+
+        boolean allowPersonalSettings = CommonConfigs.allowPersonalSettings.get();
+        if (!allowPersonalSettings) {
+            player.sendMessage(new TextComponent("§e[TsukiChat]§r 個人設定はサーバーによって無効化されています。"), Util.NIL_UUID);
+            return Command.SINGLE_SUCCESS;
         }
+
+        Set<String> tags = player.getTags();
+        String ignoreCompletelyTag = CommonConfigs.ignoreCompletelyTag.get();
+        String ignoreTag = CommonConfigs.ignoreTag.get();
+
+        StringBuilder message = new StringBuilder("§e[TsukiChat]§r 個人設定を変更しました: ");
+        if (tags.contains(ignoreCompletelyTag)) {
+            tags.remove(ignoreCompletelyTag);
+            tags.remove(ignoreTag);
+            message.append("§a有効§r");
+        } else if (tags.contains(ignoreTag)) {
+            tags.remove(ignoreTag);
+            tags.add(ignoreCompletelyTag);
+            message.append("§c無効§r");
+        } else {
+            tags.add(ignoreTag);
+            message.append("§eMarkdownのみ§r");
+        }
+        player.sendMessage(new TextComponent(message.toString()), Util.NIL_UUID);
         return Command.SINGLE_SUCCESS;
     }
 }
