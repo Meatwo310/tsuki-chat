@@ -12,8 +12,10 @@ public class CommonConfigs {
     public static ForgeConfigSpec.BooleanValue markdown;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreCompletely;
-    public static ForgeConfigSpec.ConfigValue<String> format;
-    public static ForgeConfigSpec.ConfigValue<String> formatOnIgnore;
+    public static ForgeConfigSpec.ConfigValue<String> formatOriginal;
+    public static ForgeConfigSpec.ConfigValue<String> formatConverted;
+    public static ForgeConfigSpec.ConfigValue<String> formatOriginalIgnored;
+    public static ForgeConfigSpec.ConfigValue<String> formatConvertedIgnored;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -42,14 +44,22 @@ public class CommonConfigs {
                 .comment("TsukiChatは、以下の接頭辞から始まるメッセージについて、一切の変換を行いません。")
                 .defineList("ignore_completely", List.of(":"), o -> o instanceof String);
 
-        format = builder
-                .comment("変換したメッセージをどう表示するかを指定します。\n" +
-                        "$1は変換後のメッセージ、$2は変換前のメッセージに置き換えられます。")
-                .define("format", "$1§r §7($2§r§7)§r");
-        formatOnIgnore = builder
-                .comment("コンフィグignoreで設定された接頭辞から始まるメッセージをどう表示するかを指定します。\n" +
-                        "$0は接頭辞、$1はMarkdown変換後のメッセージ、$2は変換前のメッセージに置き換えられます。")
-                .define("format_on_ignore", "§7$0§r$1§r §7($2§r§7)§r");
+        formatOriginal = builder
+                .comment("変換前のメッセージをどう表示するかを指定します。\n" +
+                        "$0は変換前のメッセージに置き換えられます。")
+                .define("format_original", "§7$0§r");
+        formatConverted = builder
+                .comment("変換後のメッセージをどう表示するかを指定します。\n" +
+                        "$0は変換後のメッセージに置き換えられます。")
+                .define("format_converted", "→ $0§r");
+        formatOriginalIgnored = builder
+                .comment("コンフィグignoreで設定された接頭辞で始まるメッセージがMarkdown変換されなかった際にどう表示するかを指定します。\n" +
+                        "$0は接頭辞、$1はメッセージのうち接頭辞以外の部分に置き換えられます。")
+                .define("format_original_ignored", "§7$0§r$1§r");
+        formatConvertedIgnored = builder
+                .comment("コンフィグignoreで設定された接頭辞から始まるメッセージがMarkdown変換された際にどう表示するかを指定します。\n" +
+                        "$0は接頭辞、$1は変換後のメッセージのうち接頭辞以外の部分に置き換えられます。")
+                .define("format_converted_ignored", "→ §7$0§r$1§r");
 
         COMMON_SPEC = builder.build();
     }
