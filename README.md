@@ -1,4 +1,4 @@
-[Modrinth](https://modrinth.com/mod/tsuki-chat) | CurseForge | [GitHub](https://github.com/Meatwo310/tsuki-chat/)
+[Modrinth](https://modrinth.com/mod/tsuki-chat) | [CurseForge](https://www.curseforge.com/minecraft/mc-mods/tsuki-chat) | [GitHub](https://github.com/Meatwo310/tsuki-chat/)
 
 # Tsuki Chat
 
