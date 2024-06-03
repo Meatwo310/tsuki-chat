@@ -1,3 +1,5 @@
+[Modrinth](https://modrinth.com/mod/tsuki-chat) | CurseForge | [GitHub](https://github.com/Meatwo310/tsuki-chat/)
+
 # Tsuki Chat
 
 A server-side MOD that converts Romaji to Japanese in chat. Highly inspired by the LunaChat plugin.  
