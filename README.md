@@ -16,8 +16,6 @@ A server-side MOD that converts Romaji to Japanese in chat. Highly inspired by t
 - Use `/tsukichat` to toggle personal settings.
 - Edit config to fine-tune the features.
 
-</details>
-
 ### ja_jp
 
 - 送信されたローマ字をひらがなに変換し、Google CGI APIを用いて非同期で日本語に変換します。
