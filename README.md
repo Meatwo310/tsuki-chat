@@ -34,11 +34,14 @@ A server-side MOD that converts Romaji to Japanese in chat. Highly inspired by t
 ![image](https://github.com/Meatwo310/tsuki-chat/assets/72017364/79fee958-1c91-44b1-94e3-0165b5440f59)
 
 ## Technical Infomation
+This is a client-side mod, so you only need to put this on the server. 
+This mod will work in the single player world if you put this in the client.
+
 This project is released under the MIT License.  
 
 You are free to add this mod to your Modrinth/CurseForge modpack.
 You can also use the jar file directly if you give credit.
 
-This project is split into branches.
+The project is split into branches.
 The `main` branch has some metafiles.
 The `${MODLOADER}-${VERSION}` branch contains the source code of this mod.
