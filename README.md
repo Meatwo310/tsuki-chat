@@ -33,7 +33,7 @@ A server-side MOD that converts Romaji to Japanese in chat. Highly inspired by t
 ![image](https://github.com/Meatwo310/tsuki-chat/assets/72017364/e1504aca-d139-4476-aca2-4578cbccdf58)
 ![image](https://github.com/Meatwo310/tsuki-chat/assets/72017364/79fee958-1c91-44b1-94e3-0165b5440f59)
 
-## Technical Infomation
+## Technical Information
 This is a client-side mod, so you only need to put this on the server. 
 This mod will work in the single player world if you put this in the client.
 
