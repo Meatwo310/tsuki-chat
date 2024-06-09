@@ -13,6 +13,7 @@ public class CommonConfigs {
     public static ForgeConfigSpec.BooleanValue allowPersonalSettings;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreCompletely;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreMessages;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginal;
     public static ForgeConfigSpec.ConfigValue<String> formatConverted;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginalIgnored;
@@ -50,6 +51,69 @@ public class CommonConfigs {
         ignoreCompletely = builder
                 .comment("TsukiChatは、以下の接頭辞から始まるメッセージについて、一切の変換を行いません。")
                 .defineList("ignore_completely", List.of(":"), o -> true);
+        ignoreMessages = builder
+                .comment("メッセージが以下のリストのいずれかと一致する場合、一切の変換を行いません。")
+                .defineList("ignore_messages", List.of(
+                        "afk",
+                        "bad",
+                        "brb",
+                        "btw",
+                        "cool",
+                        "ez",
+                        "false",
+                        "fine",
+                        "gg",
+                        "gj",
+                        "gl",
+                        "good",
+                        "great",
+                        "hello",
+                        "hf",
+                        "hi",
+                        "idk",
+                        "jk",
+                        "lmao",
+                        "lol",
+                        "maybe",
+                        "nc",
+                        "nice",
+                        "no",
+                        "nope",
+                        "np",
+                        "nvm",
+                        "oh",
+                        "ok",
+                        "okay",
+                        "omg",
+                        "please",
+                        "pls",
+                        "plz",
+                        "rofl",
+                        "sorry",
+                        "sry",
+                        "sure",
+                        "thanks",
+                        "thx",
+                        "true",
+                        "ty",
+                        "tysm",
+                        "w",
+                        "wow",
+                        "wtf",
+                        "ww",
+                        "www",
+                        "wwww",
+                        "wwwww",
+                        "wwwwww",
+                        "wwwwwww",
+                        "wwwwwwww",
+                        "wwwwwwwww",
+                        "wwwwwwwwww",
+                        "yay",
+                        "yeah",
+                        "yes",
+                        "yw"
+                ), o -> true);
 
         formatOriginal = builder
                 .comment("変換前のメッセージをどう表示するかを指定します。\n" +

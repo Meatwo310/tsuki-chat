@@ -10,6 +10,7 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,7 +34,8 @@ public class ChatCustomizer {
         boolean ignoreNonAscii = CommonConfigs.ignoreNonAscii.get();
         boolean ampersand = CommonConfigs.ampersand.get();
         boolean markdown = CommonConfigs.markdown.get();
-        var ignore = CommonConfigs.ignore.get();
+        List<? extends String> ignore = CommonConfigs.ignore.get();
+        List<? extends String> ignoreMessages = CommonConfigs.ignoreMessages.get();
         String formatOriginal = CommonConfigs.formatOriginal.get();
         String formatConverted = CommonConfigs.formatConverted.get();
         String formatOriginalIgnored = CommonConfigs.formatOriginalIgnored.get();
@@ -44,7 +46,10 @@ public class ChatCustomizer {
         String converted = markdown ? Converter.markdownToFormattingCode(amp) : amp;
         String result;
 
-        if (!ignoreTag && ignore.stream().anyMatch(original::startsWith)) {
+        if (ignoreMessages.contains(original)) {
+            // メッセージが無視リストにある場合
+            return;
+        } else if (!ignoreTag && ignore.stream().anyMatch(original::startsWith)) {
             // 接頭辞がコンフィグの無視リストにある場合
             if (original.equals(converted)) result = formatOriginalIgnored
                     .replace("$0", original.substring(0, 1))
