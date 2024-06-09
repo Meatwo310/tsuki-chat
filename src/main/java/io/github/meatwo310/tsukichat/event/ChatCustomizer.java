@@ -35,6 +35,7 @@ public class ChatCustomizer {
         boolean markdown = CommonConfigs.markdown.get();
         boolean multiThreading = CommonConfigs.multiThreading.get();
         var ignore = CommonConfigs.ignore.get();
+        int ignoreLength = CommonConfigs.ignoreLength.get();
         String formatOriginal = CommonConfigs.formatOriginal.get();
         String formatConverted = CommonConfigs.formatConverted.get();
         String formatOriginalIgnored = CommonConfigs.formatOriginalIgnored.get();
@@ -54,10 +55,15 @@ public class ChatCustomizer {
                     formatConvertedIgnored
                             .replace("$0", original.substring(0, 1))
                             .replace("$1", converted.substring(1));
-        } else if (ignoreTag || (ignoreNonAscii && !original.matches("^[!-~\\s§]+$")) ||
-                !original.matches(".*(?<!&)[a-z].*")) {
-            // プレイヤーが無視タグを持っている場合、またはコンフィグで設定されているかつASCII文字以外を含む場合、
-            // あるいは小文字のアルファベットを含まない場合は、マークダウン変換のみ行う
+        } else if (ignoreTag ||
+                (ignoreNonAscii && !original.matches("^[!-~\\s§]+$")) ||
+                !original.matches(".*(?<!&)[a-z].*") ||
+                original.length() <= ignoreLength) {
+            // 以下のいずれかの場合はマークダウン変換のみ行う:
+            // - プレイヤーが無視タグを持っている場合
+            // - ASCII文字以外を含み、かつコンフィグでそれを無視するよう設定されている場合
+            // - 小文字のアルファベットを含まない場合
+            // - 文字数が無視する長さ以下の場合
             if (original.equals(converted)) return;
             result = formatOriginal.replace("$0", original) + "\n" +
                     formatConverted.replace("$0", converted);
