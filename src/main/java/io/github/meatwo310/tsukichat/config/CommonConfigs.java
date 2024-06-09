@@ -13,6 +13,7 @@ public class CommonConfigs {
     public static ForgeConfigSpec.BooleanValue allowPersonalSettings;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreCompletely;
+    public static ForgeConfigSpec.IntValue ignoreLength;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginal;
     public static ForgeConfigSpec.ConfigValue<String> formatConverted;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginalIgnored;
@@ -50,6 +51,11 @@ public class CommonConfigs {
         ignoreCompletely = builder
                 .comment("TsukiChatは、以下の接頭辞から始まるメッセージについて、一切の変換を行いません。")
                 .defineList("ignore_completely", List.of(":"), o -> true);
+
+        ignoreLength = builder
+                .comment("変換前のメッセージの長さがこの値以下の場合、ローマ字変換や日本語変換を行いません。\n" +
+                        "ただし、マークダウンの変換は行われます。")
+                .defineInRange("ignore_length", 3, 0, Integer.MAX_VALUE);
 
         formatOriginal = builder
                 .comment("変換前のメッセージをどう表示するかを指定します。\n" +
