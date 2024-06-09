@@ -33,6 +33,7 @@ public class ChatCustomizer {
         boolean ignoreNonAscii = CommonConfigs.ignoreNonAscii.get();
         boolean ampersand = CommonConfigs.ampersand.get();
         boolean markdown = CommonConfigs.markdown.get();
+        boolean multiThreading = CommonConfigs.multiThreading.get();
         var ignore = CommonConfigs.ignore.get();
         String formatOriginal = CommonConfigs.formatOriginal.get();
         String formatConverted = CommonConfigs.formatConverted.get();
@@ -68,12 +69,16 @@ public class ChatCustomizer {
             // 日本語変換する場合
             result = formatOriginal.replace("$0", original);
 
-            // 日本語への変換は非同期で行う
-            executorService.submit(() -> {
+            if (multiThreading) {
+                executorService.submit(() -> {
+                    String japanese = Converter.romajiToJapanese(converted);
+                    TextComponent component = new TextComponent(formatConverted.replace("$0", japanese));
+                    player.server.getPlayerList().broadcastMessage(component, ChatType.CHAT, player.getUUID());
+                });
+            } else {
                 String japanese = Converter.romajiToJapanese(converted);
-                TextComponent component = new TextComponent(formatConverted.replace("$0", japanese));
-                player.server.getPlayerList().broadcastMessage(component, ChatType.CHAT, player.getUUID());
-            });
+                result += "\n" + formatConverted.replace("$0", japanese);
+            }
         }
 
         event.setComponent(new TranslatableComponent("chat.type.text", player.getDisplayName(), result));
