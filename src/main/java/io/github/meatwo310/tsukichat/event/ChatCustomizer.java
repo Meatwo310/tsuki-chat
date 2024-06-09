@@ -1,10 +1,9 @@
 package io.github.meatwo310.tsukichat.event;
 
-import io.github.meatwo310.tsukichat.TsukiChat;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
 import io.github.meatwo310.tsukichat.util.Converter;
-import net.minecraft.network.chat.*;
-import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,11 +16,6 @@ import java.util.concurrent.Executors;
 @Mod.EventBusSubscriber
 public class ChatCustomizer {
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
-
-//    @SubscribeEvent
-//    public static void tmp(ServerChatEvent event) {
-//        return;
-//    }
 
     @SubscribeEvent
     public static void onChat(ServerChatEvent event) {
@@ -88,19 +82,10 @@ public class ChatCustomizer {
             if (multiThreading) {
                 executorService.submit(() -> {
                     String japanese = Converter.romajiToJapanese(converted);
-//                    TsukiChat.LOGGER.info("Converted: " + japanese);
-//                    player.server.getPlayerList().broadcastSystemMessage();
                     MutableComponent component = Component.literal(formatConverted.replace("$0", japanese));
                     player.server.getPlayerList().broadcastSystemMessage(component, false);
-//                    PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(
-//                            player.getUUID(),
-//                            formatConverted.replace("$0", japanese)
-//                    );
-//                    player.createCommandSourceStack().sendChatMessage(
-//                            new OutgoingChatMessage.Player(chatMessage),
-//                            false,
-//                            ChatType.bind(ChatType.EMOTE_COMMAND, player)
-//                    );
+//                    PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), formatConverted.replace("$0", japanese));
+//                    player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.EMOTE_COMMAND, player));
                 });
             } else {
                 String japanese = Converter.romajiToJapanese(converted);
