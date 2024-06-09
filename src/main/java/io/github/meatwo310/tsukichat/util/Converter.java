@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -106,11 +107,32 @@ public class Converter {
     }
 
     /**
-     * ひらがなを日本語に変換する
+     * ひらがなを必要に応じて分割しながら日本語に変換する
      * @param hiragana ひらがな
      * @return 日本語
      */
     public static String hiraganaToJapanese(String hiragana) {
+        // 空白で分割して並列で変換し、変換結果に空の要素があれば代わりにひらがなにフォールバックしてエラーを付加
+        String[] parts = hiragana.split(" ");
+        String[] result = Arrays.stream(parts)
+                .parallel()
+                .map(Converter::hiraganaPartsToJapanese)
+                .toArray(String[]::new);
+        boolean fallback = Arrays.stream(result).anyMatch(String::isEmpty);
+        if (!fallback) return String.join(" ", result);
+        for (int i = 0; i < result.length; i++) {
+            if (!result[i].isEmpty()) continue;
+            result[i] = parts[i];
+        }
+        return String.join(" ", result) + " §8(長すぎます、スペースで区切ってください)§r";
+    }
+
+    /**
+     * ひらがなを日本語に変換する
+     * @param hiragana ひらがな
+     * @return 日本語
+     */
+    private static String hiraganaPartsToJapanese(String hiragana) {
         try {
             // GoogleのAPIを使って変換
             URL url = new URL("https://www.google.com/transliterate?langpair=ja-Hira|ja&text=" +
