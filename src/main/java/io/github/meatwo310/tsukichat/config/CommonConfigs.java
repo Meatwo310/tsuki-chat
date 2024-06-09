@@ -46,10 +46,10 @@ public class CommonConfigs {
         ignore = builder
                 .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
                         "ただし、マークダウンの変換は行われます。")
-                .defineList("ignore", List.of("!", "#", ";"), o -> o instanceof String);
+                .defineList("ignore", List.of("!", "#", ";"), o -> true);
         ignoreCompletely = builder
                 .comment("TsukiChatは、以下の接頭辞から始まるメッセージについて、一切の変換を行いません。")
-                .defineList("ignore_completely", List.of(":"), o -> o instanceof String);
+                .defineList("ignore_completely", List.of(":"), o -> true);
 
         formatOriginal = builder
                 .comment("変換前のメッセージをどう表示するかを指定します。\n" +
