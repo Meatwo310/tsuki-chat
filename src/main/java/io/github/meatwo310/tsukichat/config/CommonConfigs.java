@@ -11,9 +11,11 @@ public class CommonConfigs {
     public static ForgeConfigSpec.BooleanValue ampersand;
     public static ForgeConfigSpec.BooleanValue markdown;
     public static ForgeConfigSpec.BooleanValue allowPersonalSettings;
+    public static ForgeConfigSpec.BooleanValue multiThreading;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreCompletely;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreMessages;
+    public static ForgeConfigSpec.IntValue ignoreLength;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginal;
     public static ForgeConfigSpec.ConfigValue<String> formatConverted;
     public static ForgeConfigSpec.ConfigValue<String> formatOriginalIgnored;
@@ -43,6 +45,12 @@ public class CommonConfigs {
                 .comment("プレイヤーが /tsukichat で個人設定を変更できるようにするかどうか。\n" +
                         "無効にした場合でも、ignoreTagとignoreCompletelyTagは使用されます。")
                 .define("allow_personal_settings", true);
+        multiThreading = builder
+                .comment("""
+                        ローマ字から日本語への変換をマルチスレッドで行うかどうか。
+                        無効化した場合、他MODとの互換性が向上する代償に、
+                        サーバーのtick処理に顕著な遅延が生じる可能性があります。""")
+                .define("multi_threading", true);
 
         ignore = builder
                 .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
@@ -114,6 +122,11 @@ public class CommonConfigs {
                         "yes",
                         "yw"
                 ), o -> true);
+
+        ignoreLength = builder
+                .comment("変換前のメッセージの長さがこの値以下の場合、ローマ字変換や日本語変換を行いません。\n" +
+                        "ただし、マークダウンの変換は行われます。")
+                .defineInRange("ignore_length", 3, 0, Integer.MAX_VALUE);
 
         formatOriginal = builder
                 .comment("変換前のメッセージをどう表示するかを指定します。\n" +
