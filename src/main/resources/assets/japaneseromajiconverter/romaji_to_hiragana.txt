@@ -119,11 +119,6 @@ ri:り
 ru:る
 re:れ
 ro:ろ
-la:ら
-li:り
-lu:る
-le:れ
-lo:ろ
 wa:わ
 wi:うぃ
 wu:う
@@ -239,11 +234,6 @@ ryi:りぃ
 ryu:りゅ
 rye:りぇ
 ryo:りょ
-lya:りゃ
-lyi:りぃ
-lyu:りゅ
-lye:りぇ
-lyo:りょ
 dzu:づ
 wyi:ゐ
 wye:ゑ
