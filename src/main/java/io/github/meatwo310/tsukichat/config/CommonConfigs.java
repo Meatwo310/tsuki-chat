@@ -31,10 +31,10 @@ public class CommonConfigs {
             .define("allow_personal_settings", true);
     public static ForgeConfigSpec.BooleanValue multiThreading = builder
             .comment("""
-                    ローマ字から日本語への変換をマルチスレッドで行うかどうか。
-                    無効化した場合、他MODとの互換性が向上する代償に、
-                    サーバーのtick処理に顕著な遅延が生じる可能性があります。""")
-            .define("multi_threading", true);
+                    [非推奨] ローマ字から日本語への変換をTsukiChat側のマルチスレッドで行うかどうか。
+                    比較的新しいMinecraftではForgeがイベントをマルチスレッドで処理するため、
+                    この設定を有効化する必要はありません。""")
+            .define("multi_threading", false);
 
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore = builder
             .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
