@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 
 
-version = '1.2.0'
+version = '1.2.1'
 group = 'io.github.meatwo310.tsukichat' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'tsukichat'
 
