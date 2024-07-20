@@ -2,6 +2,7 @@ package io.github.meatwo310.tsukichat.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
 import net.minecraft.commands.CommandSourceStack;
@@ -12,6 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import java.util.Set;
 
 public class TsukiChatCommand {
+    static final String PLACEHOLDER = "§e[TsukiChat]§r ";
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tsukichat")
                 .then(Commands.literal("mode")
@@ -24,6 +27,24 @@ public class TsukiChatCommand {
                         .then(Commands.literal("toggle")
                                 .executes(commandContext -> mode(commandContext, ModeType.TOGGLE)))
                         .executes(commandContext -> mode(commandContext, ModeType.TOGGLE))
+                )
+                .then(Commands.literal("userdict")
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("key", StringArgumentType.string())
+                                        .then(Commands.argument("value", StringArgumentType.string())
+                                                .executes(UserDictionaryCommand::add)))
+                        )
+                        .then(Commands.literal("remove")
+                                .then(Commands.argument("key", StringArgumentType.string())
+                                        .executes(UserDictionaryCommand::remove))
+                        )
+                        .then(Commands.literal("removeall")
+                                .then(Commands.argument("type_YES_if_you_are_sure", StringArgumentType.string())
+                                        .executes(UserDictionaryCommand::removeAll))
+                        )
+                        .then(Commands.literal("list")
+                                .executes(UserDictionaryCommand::list)
+                        )
                 )
         );
     }
@@ -50,7 +71,7 @@ public class TsukiChatCommand {
         String ignoreCompletelyTag = CommonConfigs.ignoreCompletelyTag.get();
         String ignoreTag = CommonConfigs.ignoreTag.get();
 
-        StringBuilder message = new StringBuilder("§e[TsukiChat]§r 個人設定を変更しました: ");
+        StringBuilder message = new StringBuilder(PLACEHOLDER).append("個人設定を変更しました: ");
         switch (modeType) {
             case ENABLE -> {
                 tags.remove(ignoreCompletelyTag);
@@ -82,6 +103,7 @@ public class TsukiChatCommand {
                 }
             }
         }
+
         player.sendSystemMessage(Component.literal(message.toString()));
         return Command.SINGLE_SUCCESS;
     }

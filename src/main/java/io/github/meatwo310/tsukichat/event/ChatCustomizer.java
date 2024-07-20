@@ -1,17 +1,23 @@
 package io.github.meatwo310.tsukichat.event;
 
+import io.github.meatwo310.tsukichat.commands.UserDictionaryCommand;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
 import io.github.meatwo310.tsukichat.util.Converter;
+import io.github.meatwo310.tsukichat.util.PlayerNbtUtil;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 @Mod.EventBusSubscriber
 public class ChatCustomizer {
@@ -73,26 +79,55 @@ public class ChatCustomizer {
                     formatConverted.replace("$0", converted);
         } else if (!transliterate) {
             // ローマ字変換のみの場合
+            CompoundTag tag = PlayerNbtUtil.loadCompoundTag(player, UserDictionaryCommand.KEY_NAME);
             result = formatOriginal.replace("$0", original) + "\n" +
-                    formatConverted.replace("$0", Converter.romajiToHiragana(converted));
+                    formatConverted.replace("$0", applyDictionary(converted, tag, Converter::romajiToHiragana));
         } else {
             // 日本語変換する場合
             result = formatOriginal.replace("$0", original);
 
             if (multiThreading) {
                 executorService.submit(() -> {
-                    String japanese = Converter.romajiToJapanese(converted);
+                    CompoundTag tag = PlayerNbtUtil.loadCompoundTag(player, UserDictionaryCommand.KEY_NAME);
+                    String hiragana = applyDictionary(converted, tag, Converter::romajiToHiragana);
+                    String japanese = applyDictionary(hiragana, tag, Converter::hiraganaToJapanese);
                     MutableComponent component = Component.literal(formatConverted.replace("$0", japanese));
                     player.server.getPlayerList().broadcastSystemMessage(component, false);
                     //                    PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), formatConverted.replace("$0", japanese));
                     //                    player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.EMOTE_COMMAND, player));
                 });
             } else {
-                String japanese = Converter.romajiToJapanese(converted);
+                CompoundTag tag = PlayerNbtUtil.loadCompoundTag(player, UserDictionaryCommand.KEY_NAME);
+                String hiragana = applyDictionary(converted, tag, Converter::romajiToHiragana);
+                String japanese = applyDictionary(hiragana, tag, Converter::hiraganaToJapanese);
                 result += "\n" + formatConverted.replace("$0", japanese);
             }
         }
 
         event.setMessage(Component.literal(result));
+    }
+
+    public static String applyDictionary(String original, CompoundTag dictionary, Function<String, String> function) {
+        List<Pair<String, String>> dictionaryPairList = new ArrayList<>();
+        dictionary.getAllKeys().forEach(pair -> dictionaryPairList.add(Pair.of(pair, dictionary.getString(pair))));
+
+        String intermediate = original;
+        for (int i = 0; i < dictionaryPairList.size(); i++) {
+            intermediate = intermediate.replace(
+                    dictionaryPairList.get(i).getLeft(),
+                    "[INTERMEDIATE_" + i + "]"
+            );
+        }
+
+        String output = function.apply(intermediate);
+
+        for (int i = 0; i < dictionaryPairList.size(); i++) {
+            output = output.replace(
+                    "[INTERMEDIATE_" + i + "]",
+                    dictionaryPairList.get(i).getRight()
+            );
+        }
+
+        return output;
     }
 }
