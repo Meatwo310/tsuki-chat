@@ -10,10 +10,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("tsukichat")
+@Mod(TsukiChat.MODID)
 public class TsukiChat {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final String MODID = "tsukichat";
 
     public TsukiChat() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
