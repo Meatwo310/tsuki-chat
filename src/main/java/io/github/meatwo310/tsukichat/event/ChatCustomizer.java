@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,7 +24,7 @@ import java.util.function.Function;
 public class ChatCustomizer {
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onChat(ServerChatEvent event) {
         // クライアントサイドでは実行しない
         ServerPlayer player = event.getPlayer();
