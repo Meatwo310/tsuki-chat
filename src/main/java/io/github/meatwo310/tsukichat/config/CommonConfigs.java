@@ -39,10 +39,10 @@ public class CommonConfigs {
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore = builder
             .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
                     "ただし、マークダウンの変換は行われます。")
-            .defineList("ignore", List.of("!", "#", ";"), o -> true);
+            .defineList("ignore", List.of("#", ";"), o -> true);
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreCompletely = builder
             .comment("TsukiChatは、以下の接頭辞から始まるメッセージについて、一切の変換を行いません。")
-            .defineList("ignore_completely", List.of(":"), o -> true);
+            .defineList("ignore_completely", List.of(":", "!", "./"), o -> true);
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreMessages = builder
             .comment("メッセージが以下のリストのいずれかと一致する場合、一切の変換を行いません。")
             .defineList("ignore_messages", List.of(
