@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "io.github.meatwo310.tsukichat.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "SDLinkServerEventsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

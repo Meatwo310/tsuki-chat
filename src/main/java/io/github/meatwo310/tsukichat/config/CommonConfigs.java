@@ -35,6 +35,10 @@ public class CommonConfigs {
                     比較的新しいMinecraftではForgeがイベントをマルチスレッドで処理するため、
                     この設定を有効化する必要はありません。""")
             .define("multi_threading", false);
+    public static ForgeConfigSpec.BooleanValue sdlinkCompat = builder
+            .comment("Simple Discord Link上でtsukichatを作用させるかどうか。\n" +
+                    "無効にすると、Simple Discord Linkは従来どおり変換前のメッセージを使用します。")
+            .define("sdlink_compat", true);
 
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore = builder
             .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
