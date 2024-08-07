@@ -165,6 +165,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     implementation fg.deobf("curse.maven:craterlib-867099:5574012")
+    implementation fg.deobf("curse.maven:simple-discord-link-bot-forge-fabric-spigot-541320:5574099")
+//    compileOnly fg.deobf("curse.maven:simple-discord-link-bot-forge-fabric-spigot-541320:5574099")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
