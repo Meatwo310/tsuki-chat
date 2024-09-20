@@ -45,7 +45,8 @@ public class TsukiChatCommand {
                         .then(Commands.literal("list")
                                 .executes(UserDictionaryCommand::list)
                         )
-                )
+                ).then(Commands.argument("arg", StringArgumentType.string())
+                                .executes((CustomCommand::execute)))
         );
     }
 
