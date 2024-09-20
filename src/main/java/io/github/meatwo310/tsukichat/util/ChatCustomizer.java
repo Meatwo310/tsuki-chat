@@ -10,7 +10,7 @@ public class ChatCustomizer {
     static final String DICT_PREFIX = "[DICT_";
     static final String DICT_SUFFIX = "]";
 
-    public static CustomizedChat recognizeChat(String original, Set<String> playerTags, LinkedHashMap<String, String> userDictionary) {
+    public static CustomizedChat recognizeChat(String original, Set<String> playerTags, LinkedHashMap<String, String> userDictionary, LinkedHashMap<String, String> serverDictionary) {
         CustomizedChat empty = new CustomizedChat();
 
         // メッセージが空の場合は何もしない
@@ -28,6 +28,10 @@ public class ChatCustomizer {
 
         // 無視タグを持っているかどうか
         boolean onlyMarkdown = playerTags.contains(CommonConfigs.ignoreTag.get());
+
+        // 辞書をマージ
+        LinkedHashMap<String, String> mergedDictionary = new LinkedHashMap<>(serverDictionary);
+        mergedDictionary.putAll(userDictionary);
 
         // メッセージを変換
         String amp = CommonConfigs.ampersand.get() ? Converter.ampersandToFormattingCode(original) : original;
@@ -62,21 +66,21 @@ public class ChatCustomizer {
         } else if (!CommonConfigs.transliterate.get()) {
             // ローマ字変換のみの場合
             result = formatOriginal.replace("$0", original) + "\n" +
-                    formatConverted.replace("$0", applyDictionary(converted, userDictionary, Converter::romajiToHiragana));
+                    formatConverted.replace("$0", applyDictionary(converted, mergedDictionary, Converter::romajiToHiragana));
         } else {
             // 日本語変換する場合
             if (CommonConfigs.multiThreading.get()) {
                 return new CustomizedChat(
                         formatOriginal.replace("$0", original),
                         () -> {
-                            String hiragana = applyDictionary(converted, userDictionary, Converter::romajiToHiragana);
-                            String japanese = applyDictionary(hiragana, userDictionary, Converter::hiraganaToJapanese);
+                            String hiragana = applyDictionary(converted, mergedDictionary, Converter::romajiToHiragana);
+                            String japanese = applyDictionary(hiragana, mergedDictionary, Converter::hiraganaToJapanese);
                             return formatConverted.replace("$0", japanese);
                         }
                 );
             } else {
-                String hiragana = applyDictionary(converted, userDictionary, Converter::romajiToHiragana);
-                String japanese = applyDictionary(hiragana, userDictionary, Converter::hiraganaToJapanese);
+                String hiragana = applyDictionary(converted, mergedDictionary, Converter::romajiToHiragana);
+                String japanese = applyDictionary(hiragana, mergedDictionary, Converter::hiraganaToJapanese);
                 result = formatOriginal.replace("$0", original) + "\n" +
                         formatConverted.replace("$0", japanese);
             }

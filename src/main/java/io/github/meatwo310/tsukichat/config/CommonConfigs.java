@@ -39,6 +39,14 @@ public class CommonConfigs {
             .comment("Simple Discord Link上でtsukichatを作用させるかどうか。\n" +
                     "無効にすると、Simple Discord Linkは従来どおり変換前のメッセージを使用します。")
             .define("sdlink_compat", true);
+    public static ForgeConfigSpec.BooleanValue allowAddingServerDictionary = builder
+            .comment("通常のプレイヤーがサーバー辞書に単語を追加できるようにするかどうか。\n" +
+                    "無効にした場合でも、OP権限を持つプレイヤーは辞書を管理することができます。")
+            .define("allow_add_global_dictionary", true);
+    public static ForgeConfigSpec.BooleanValue allowRemovingServerDictionary = builder
+            .comment("通常のプレイヤーがサーバー辞書から単語を削除できるようにするかどうか。\n" +
+                    "無効にした場合でも、OP権限を持つプレイヤーは辞書を管理することができます。")
+            .define("allow_remove_global_dictionary", true);
 
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore = builder
             .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
@@ -109,6 +117,22 @@ public class CommonConfigs {
                     "yeah",
                     "yes",
                     "yw"
+            ), o -> true);
+
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> serverDictionary = builder
+            .comment("サーバー辞書。ここに登録された単語は、すべてのプレイヤーのメッセージに対して適用されます。\n" +
+                    "キーと値は、タブ文字\\tで区切ってください。")
+            .defineList("server_dictionary", List.of(
+                    "TsukiChat\tTsukiChat",
+                    "Minecraft\tMinecraft",
+                    "Forge\tForge",
+                    "Fabric\tFabric",
+                    "Mod\tMod",
+                    "NeoForge\tNeoForge",
+                    "Google\tGoogle",
+                    "GitHub\tGitHub",
+                    "Java\tJava",
+                    "っw\tww"
             ), o -> true);
 
     public static ForgeConfigSpec.IntValue ignoreLength = builder
