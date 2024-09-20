@@ -2,6 +2,7 @@ package io.github.meatwo310.tsukichat.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
@@ -62,6 +63,17 @@ public class TsukiChatCommand {
                         .then(Commands.literal("list")
                                 .executes(ServerDictionaryCommand::list)
                         )
+                ).then(Commands.literal("permission")
+                        .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
+                        .then(Commands.literal("allow_personal_settings")
+                                .then(Commands.argument("value", BoolArgumentType.bool())
+                                        .executes(PermissionCommand::allowPersonalSettings)))
+                        .then(Commands.literal("allow_adding_server_dictionary")
+                                .then(Commands.argument("value", BoolArgumentType.bool())
+                                        .executes(PermissionCommand::allowAddingServerDictionary)))
+                        .then(Commands.literal("allow_removing_server_dictionary")
+                                .then(Commands.argument("value", BoolArgumentType.bool())
+                                        .executes(PermissionCommand::allowRemovingServerDictionary)))
                 ).then(Commands.argument("arg", StringArgumentType.string())
                                 .executes((CustomCommand::execute)))
         );
