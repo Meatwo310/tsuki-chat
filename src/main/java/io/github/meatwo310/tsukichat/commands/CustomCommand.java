@@ -11,7 +11,7 @@ public class CustomCommand {
     public static int execute(CommandContext<CommandSourceStack> ctx) {
         String arg = ctx.getArgument("arg", String.class);
         return switch (arg) {
-            case "neofetch" -> neofetch(ctx);
+            case "fetch", "neofetch" -> neofetch(ctx);
             default -> {
                 ctx.getSource().sendFailure(Component.literal("不明な引数: " + arg));
                 yield 0;
