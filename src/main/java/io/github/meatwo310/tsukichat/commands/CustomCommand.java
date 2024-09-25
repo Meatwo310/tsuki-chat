@@ -1,6 +1,8 @@
 package io.github.meatwo310.tsukichat.commands;
 
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.ModContainer;
@@ -22,17 +24,18 @@ import oshi.util.Util;
 import java.util.Arrays;
 
 public class CustomCommand {
-    public static int execute(CommandContext<CommandSourceStack> ctx) {
+    private static final DynamicCommandExceptionType ERROR_UNKNOWN_ARG = new DynamicCommandExceptionType(arg ->
+            Component.literal("不明な引数: " + arg)
+    );
+
+    public static int execute(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         String arg = ctx.getArgument("arg", String.class);
         return switch (arg) {
             case "fetch", "neofetch" -> {
-                ctx.getSource().sendSuccess(() -> Component.literal(neofetch()), false);
+                ctx.getSource().sendSuccess(() -> TsukiChatCommand.getComponent(neofetch()), false);
                 yield 1;
             }
-            default -> {
-                ctx.getSource().sendFailure(Component.literal("不明な引数: " + arg));
-                yield 0;
-            }
+            default -> throw ERROR_UNKNOWN_ARG.create(arg);
         };
     }
 
@@ -44,7 +47,7 @@ public class CustomCommand {
         Baseboard baseboard = hardwareSystem.getBaseboard();
         CentralProcessor processor = hardware.getProcessor();
 
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder("§8===========§r §cn§6e§eo§af§3e§9t§5c§ch§r §8===========§r");
 
         // Disk Usage
         addInfo(result, "Disk Usage");
@@ -69,6 +72,8 @@ public class CustomCommand {
                 );
             });
         });
+
+        result.append("\n§8= = = = = = = = = = = = = = = = = = = = = = =§r");
 
         // Various Info
         addInfo(result, "OS", os.getManufacturer(), os.getFamily(), os.getVersionInfo().toString(), System.getProperty("os.arch"));
@@ -134,7 +139,7 @@ public class CustomCommand {
         long jvmFree = Runtime.getRuntime().freeMemory();
         long jvmUsed = jvmAllocated - jvmFree;
         long jvmAllocatedMax = Runtime.getRuntime().maxMemory();
-        addInfo(result, "JVM Memory", String.format("%s / %s (%s used) [max used: %s]",
+        addInfo(result, "JVM Memory", String.format("%s / %s (%s used) [allocated: %s]",
                 humanReadableByteCount(jvmUsed),
                 humanReadableByteCount(jvmAllocatedMax),
                 jvmUsed * 100 / jvmAllocatedMax + "%",
@@ -165,6 +170,8 @@ public class CustomCommand {
 //                humanReadableByteCount(virtualMemUsed), "/", humanReadableByteCount(virtualMemTotal),
 //                "(" + virtualMemUsed * 100 / virtualMemTotal + "% used)"
 //        );
+
+        result.append("\n§8========================================§r");
 
         return result.toString();
     }
