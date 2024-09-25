@@ -5,6 +5,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -15,6 +17,17 @@ import java.util.Set;
 
 public class TsukiChatCommand {
     static final String PLACEHOLDER = "§e[TsukiChat]§r ";
+    private static final SimpleCommandExceptionType ERROR_PERSONAL_SETTINGS_DISABLED = new SimpleCommandExceptionType(
+            TsukiChatCommand.getErrorComponent("個人設定はサーバーによって無効化されています。")
+    );
+
+    public static Component getComponent(String ...message) {
+        return Component.literal(PLACEHOLDER + String.join("", message));
+    }
+
+    public static Component getErrorComponent(String ...message) {
+        return Component.literal(PLACEHOLDER + "§c" + String.join("", message));
+    }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tsukichat")
@@ -86,22 +99,21 @@ public class TsukiChatCommand {
         TOGGLE,
     }
 
-    private static int mode(CommandContext<CommandSourceStack> command, ModeType modeType) {
-        Player player = (Player) command.getSource().getEntity();
+    private static int mode(CommandContext<CommandSourceStack> ctx, ModeType modeType) throws CommandSyntaxException {
+        Player player = (Player) ctx.getSource().getEntity();
 
         if (!(player instanceof Player)) return Command.SINGLE_SUCCESS;
 
         boolean allowPersonalSettings = CommonConfigs.allowPersonalSettings.get();
         if (!allowPersonalSettings) {
-            player.sendSystemMessage(Component.literal("§e[TsukiChat]§r 個人設定はサーバーによって無効化されています。"));
-            return Command.SINGLE_SUCCESS;
+            throw ERROR_PERSONAL_SETTINGS_DISABLED.create();
         }
 
         Set<String> tags = player.getTags();
         String ignoreCompletelyTag = CommonConfigs.ignoreCompletelyTag.get();
         String ignoreTag = CommonConfigs.ignoreTag.get();
 
-        StringBuilder message = new StringBuilder(PLACEHOLDER).append("個人設定を変更しました: ");
+        StringBuilder message = new StringBuilder("個人設定を変更しました: ");
         switch (modeType) {
             case ENABLE -> {
                 tags.remove(ignoreCompletelyTag);
@@ -134,7 +146,7 @@ public class TsukiChatCommand {
             }
         }
 
-        player.sendSystemMessage(Component.literal(message.toString()));
+        ctx.getSource().sendSuccess(() -> TsukiChatCommand.getComponent(message.toString()), false);
         return Command.SINGLE_SUCCESS;
     }
 }

@@ -2,21 +2,32 @@ package io.github.meatwo310.tsukichat.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ServerDictionaryCommand {
-    public static final Component NOT_ENOUGH_PERMISSION_ADDING = Component.literal(TsukiChatCommand.PLACEHOLDER + "§cサーバー辞書に単語を追加する権限がありません。");
-    public static final Component NOT_ENOUGH_PERMISSION_REMOVING = Component.literal(TsukiChatCommand.PLACEHOLDER + "§cサーバー辞書から単語を削除する権限がありません。");
+    private static final SimpleCommandExceptionType ERROR_NO_PERMISSION_TO_ADD = new SimpleCommandExceptionType(
+            TsukiChatCommand.getErrorComponent("サーバー辞書に単語を追加する権限がありません。")
+    );
+    private static final SimpleCommandExceptionType ERROR_NO_PERMISSION_TO_REMOVE = new SimpleCommandExceptionType(
+            TsukiChatCommand.getErrorComponent("サーバー辞書から単語を削除する権限がありません。")
+    );
+    private static final DynamicCommandExceptionType ERROR_WORD_NOT_FOUND = new DynamicCommandExceptionType(key ->
+            TsukiChatCommand.getErrorComponent("サーバー辞書にキー " + key + " は存在しません。")
+    );
+    private static final SimpleCommandExceptionType ERROR_NOT_CONFIRMED = new SimpleCommandExceptionType(
+            TsukiChatCommand.getErrorComponent("サーバー辞書を全消去するには、 引数に§4YES§cを付加してください。")
+    );
 
-    static int add(CommandContext<CommandSourceStack> ctx) {
+    static int add(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         if (!checkPermission(ctx, PermissionActionType.ADD)) {
-            ctx.getSource().sendFailure(NOT_ENOUGH_PERMISSION_ADDING);
-            return 0;
+            throw ERROR_NO_PERMISSION_TO_ADD.create();
         }
 
         LinkedHashMap<String, String> serverDictionary = getServerDictionary();
@@ -24,13 +35,13 @@ public class ServerDictionaryCommand {
         String value = ctx.getArgument("value", String.class);
 
         if (serverDictionary.containsKey(key)) {
-            ctx.getSource().sendSuccess(() -> Component.literal(TsukiChatCommand.PLACEHOLDER +
-                    "サーバー辞書の単語を更新しました: " + key + " → " + value + " (元の値: " + serverDictionary.get(key) + ")"),
+            ctx.getSource().sendSuccess(() -> TsukiChatCommand.getComponent(
+                    "サーバー辞書の単語を更新しました: ", key, " → ", value, " (元の値: ", serverDictionary.get(key), ")"),
                     true
             );
         } else {
-            ctx.getSource().sendSuccess(() -> Component.literal(TsukiChatCommand.PLACEHOLDER +
-                    "サーバー辞書に単語を追加しました: " + key + " → " + value),
+            ctx.getSource().sendSuccess(() -> TsukiChatCommand.getComponent(
+                    "サーバー辞書に単語を追加しました: ", key, " → ", value),
                     true
             );
         }
@@ -40,10 +51,9 @@ public class ServerDictionaryCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    static int remove(CommandContext<CommandSourceStack> ctx) {
+    static int remove(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         if (!checkPermission(ctx, PermissionActionType.REMOVE)) {
-            ctx.getSource().sendFailure(NOT_ENOUGH_PERMISSION_REMOVING);
-            return 0;
+            throw ERROR_NO_PERMISSION_TO_REMOVE.create();
         }
 
         LinkedHashMap<String, String> serverDictionary = getServerDictionary();
@@ -52,38 +62,33 @@ public class ServerDictionaryCommand {
         if (serverDictionary.containsKey(key)) {
             serverDictionary.remove(key);
             setServerDictionary(serverDictionary);
-            ctx.getSource().sendSuccess(() -> Component.literal(TsukiChatCommand.PLACEHOLDER +
-                    "サーバー辞書から単語を削除しました: " + key),
+            ctx.getSource().sendSuccess(
+                    () -> TsukiChatCommand.getComponent(
+                            "サーバー辞書から単語を削除しました: ", key),
                     true
             );
         } else {
-            ctx.getSource().sendFailure(Component.literal(TsukiChatCommand.PLACEHOLDER +
-                    "§cサーバー辞書にキー " + key + " は存在しません。")
-            );
+            throw ERROR_WORD_NOT_FOUND.create(key);
         }
 
         return Command.SINGLE_SUCCESS;
     }
 
-    static int removeAll(CommandContext<CommandSourceStack> ctx) {
+    static int removeAll(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         if (!checkPermission(ctx, PermissionActionType.REMOVE)) {
-            ctx.getSource().sendFailure(NOT_ENOUGH_PERMISSION_REMOVING);
-            return 0;
+            throw ERROR_NO_PERMISSION_TO_REMOVE.create();
         }
 
         String confirm = ctx.getArgument("type_YES_if_you_are_sure", String.class);
         if (!confirm.equals("YES")) {
-            ctx.getSource().sendFailure(Component.literal(TsukiChatCommand.PLACEHOLDER +
-                    "§cユーザー辞書を全消去するには、 引数に§4YES§cを付加してください。"
-            ));
-            return 0;
+            throw ERROR_NOT_CONFIRMED.create();
         }
 
         LinkedHashMap<String, String> serverDictionary = getServerDictionary();
         serverDictionary.clear();
         setServerDictionary(serverDictionary);
-        ctx.getSource().sendSuccess(() -> Component.literal(
-                TsukiChatCommand.PLACEHOLDER + "サーバー辞書をクリアしました。"),
+        ctx.getSource().sendSuccess(() -> TsukiChatCommand.getComponent(
+                "サーバー辞書をクリアしました。"),
                 true
         );
 
@@ -93,7 +98,7 @@ public class ServerDictionaryCommand {
     static int list(CommandContext<CommandSourceStack> ctx) {
         LinkedHashMap<String, String> serverDictionary = getServerDictionary();
         if (serverDictionary.isEmpty()) {
-            ctx.getSource().sendSuccess(() -> Component.literal(TsukiChatCommand.PLACEHOLDER +
+            ctx.getSource().sendSuccess(() -> TsukiChatCommand.getComponent(
                     "サーバー辞書は空です。"),
                     false
             );
@@ -105,8 +110,8 @@ public class ServerDictionaryCommand {
                 .reduce((a, b) -> a + ",\n" + b)
                 .orElse("");
 
-        ctx.getSource().sendSuccess(() -> Component.literal(TsukiChatCommand.PLACEHOLDER +
-                "サーバー辞書の内容:\n" + contents),
+        ctx.getSource().sendSuccess(() -> TsukiChatCommand.getComponent(
+                "サーバー辞書の内容:\n", contents),
                 false
         );
 
