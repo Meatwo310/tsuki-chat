@@ -1,5 +1,6 @@
 package io.github.meatwo310.tsukichat.event;
 
+import io.github.meatwo310.tsukichat.TsukiChat;
 import io.github.meatwo310.tsukichat.commands.ServerDictionaryCommand;
 import io.github.meatwo310.tsukichat.commands.UserDictionaryCommand;
 import io.github.meatwo310.tsukichat.util.ChatCustomizer;
@@ -15,7 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = TsukiChat.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerChat {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onChat(ServerChatEvent event) {

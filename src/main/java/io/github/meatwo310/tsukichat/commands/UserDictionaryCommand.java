@@ -2,6 +2,7 @@ package io.github.meatwo310.tsukichat.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
+import io.github.meatwo310.tsukichat.compat.mohist.MohistHelper;
 import io.github.meatwo310.tsukichat.util.PlayerNbtUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.CompoundTag;
@@ -11,8 +12,20 @@ import net.minecraft.world.entity.player.Player;
 public class UserDictionaryCommand {
     public static final String KEY_NAME = "dict";
 
+    private static boolean checkMohist(CommandContext<CommandSourceStack> ctx) {
+        if (MohistHelper.isMohistLoaded() && MohistHelper.isCompatPluginLoaded()) {
+            ctx.getSource().sendFailure(Component.literal(
+                    TsukiChatCommand.PLACEHOLDER + "Mohist環境下では未実装です。"
+            ));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static int add(CommandContext<CommandSourceStack> command) {
         if (!(command.getSource().getEntity() instanceof Player player)) return Command.SINGLE_SUCCESS;
+        if (checkMohist(command)) return 0;
 
         String key = command.getArgument("key", String.class);
         String value = command.getArgument("value", String.class);
@@ -37,6 +50,7 @@ public class UserDictionaryCommand {
 
     static int remove(CommandContext<CommandSourceStack> command) {
         if (!(command.getSource().getEntity() instanceof Player player)) return Command.SINGLE_SUCCESS;
+        if (checkMohist(command)) return 0;
 
         String key = command.getArgument("key", String.class);
         StringBuilder message = new StringBuilder(TsukiChatCommand.PLACEHOLDER);
@@ -55,6 +69,7 @@ public class UserDictionaryCommand {
 
     public static int removeAll(CommandContext<CommandSourceStack> command) {
         if (!(command.getSource().getEntity() instanceof Player player)) return Command.SINGLE_SUCCESS;
+        if (checkMohist(command)) return 0;
 
         String confirm = command.getArgument("type_YES_if_you_are_sure", String.class);
 
@@ -90,6 +105,7 @@ public class UserDictionaryCommand {
 
     static int list(CommandContext<CommandSourceStack> command) {
         if (!(command.getSource().getEntity() instanceof Player player)) return Command.SINGLE_SUCCESS;
+        if (checkMohist(command)) return 0;
 
         CompoundTag tag = PlayerNbtUtil.loadCompoundTag(player, KEY_NAME);
 
