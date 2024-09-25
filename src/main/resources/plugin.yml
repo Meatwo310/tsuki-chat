@@ -1,0 +1,4 @@
+name: TsukiChatPlugin
+version: '1.0.0'
+main: io.github.meatwo310.tsukichat.compat.mohist.TsukiChatPlugin
+api-version: '1.20'
