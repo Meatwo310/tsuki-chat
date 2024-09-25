@@ -2,6 +2,7 @@ package io.github.meatwo310.tsukichat;
 
 import com.mojang.logging.LogUtils;
 import io.github.meatwo310.tsukichat.compat.SDLinkServerChatEvent;
+import io.github.meatwo310.tsukichat.compat.mohist.MohistHelper;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,6 +33,18 @@ public class TsukiChat {
                 LOGGER.info("Simple Discord Link is present!");
                 LOGGER.info("Replacing the default chat event handler with Forge's event handler 😡");
                 MinecraftForge.EVENT_BUS.register(new SDLinkServerChatEvent());
+            }
+        });
+
+        // Mohist Compat
+        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
+            if (!MohistHelper.isMohistLoaded()) return;
+            if (CommonConfigs.mohistCompat.get()) {
+                LOGGER.warn("Mohist is present! Oh no!");
+                LOGGER.warn("We will check if the compat plugin is loaded...");
+            } else {
+                LOGGER.warn("Mohist is present!");
+                LOGGER.warn("Although the compat feature is disabled in the config so we will not do anything.");
             }
         });
     }

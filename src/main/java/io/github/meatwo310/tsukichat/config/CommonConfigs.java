@@ -47,6 +47,12 @@ public class CommonConfigs {
             .comment("通常のプレイヤーがサーバー辞書から単語を削除できるようにするかどうか。\n" +
                     "無効にした場合でも、OP権限を持つプレイヤーは辞書を管理することができます。")
             .define("allow_remove_global_dictionary", true);
+    public static ForgeConfigSpec.BooleanValue mohistCompat = builder
+            .comment("""
+                    Mohist上でSpigotのイベントシステムを使用するかどうか。
+                    Mohist上でForgeのServerChatEventが発火しない問題の回避策となります。
+                    Mohist環境下でない場合、このオプションは単に無視されます。""")
+            .define("mohist_compat", true);
 
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignore = builder
             .comment("TsukiChatは、以下の接頭辞から始まるメッセージのローマ字変換や日本語変換を行いません。\n" +
