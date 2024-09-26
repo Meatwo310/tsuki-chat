@@ -158,10 +158,14 @@ public class CustomCommand {
         // Get System Swap Usage
         long swapTotal = hardware.getMemory().getVirtualMemory().getSwapTotal();
         long swapUsed = hardware.getMemory().getVirtualMemory().getSwapUsed();
-        addInfo(result, "System Swap",
-                humanReadableByteCount(swapUsed), "/", humanReadableByteCount(swapTotal),
-                "(" + swapUsed * 100 / swapTotal + "% used)"
-        );
+        if (swapTotal <= 0) {
+            addInfo(result, "System Swap", "not available");
+        } else {
+            addInfo(result, "System Swap",
+                    humanReadableByteCount(swapUsed), "/", humanReadableByteCount(swapTotal),
+                    "(" + swapUsed * 100 / swapTotal + "% used)"
+            );
+        }
 
         // Get Virtual Memory Usage
 //        long virtualMemTotal = hardware.getMemory().getVirtualMemory().getVirtualMax();
