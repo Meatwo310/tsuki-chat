@@ -4,7 +4,11 @@
 # against bad commits.
 
 name: build
-on: [pull_request, push]
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
 
 jobs:
   build:
@@ -16,6 +20,9 @@ jobs:
           17,
         ]
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
