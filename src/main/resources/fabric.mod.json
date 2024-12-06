@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "tsukichat",
+  "version": "${version}",
+  "name": "Tsuki Chat",
+  "description": "Converts Romaji to Japanese in chat.",
+  "authors": [
+    "Meatwo310"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/tsukichat/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.meatwo310.tsukichat.TsukiChat"
+    ],
+    "client": [
+      "io.github.meatwo310.tsukichat.TsukiChatClient"
+    ]
+  },
+  "mixins": [
+    "tsukichat.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.9",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "forgeconfigapiport": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
