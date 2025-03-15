@@ -4,7 +4,7 @@ import io.github.meatwo310.tsukichat.TsukiChat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ConverterTest {
     @Test
