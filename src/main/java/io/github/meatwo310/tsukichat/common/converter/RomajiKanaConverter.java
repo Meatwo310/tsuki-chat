@@ -1,4 +1,4 @@
-package io.github.meatwo310.tsukichat.common;
+package io.github.meatwo310.tsukichat.common.converter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,9 @@ public class RomajiKanaConverter {
 
     static {
         loadRomajiTable();
+    }
+
+    private RomajiKanaConverter() {
     }
 
     private static void loadRomajiTable() {

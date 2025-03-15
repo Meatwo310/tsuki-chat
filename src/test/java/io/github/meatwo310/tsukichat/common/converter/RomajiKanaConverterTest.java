@@ -1,4 +1,4 @@
-package io.github.meatwo310.tsukichat.common;
+package io.github.meatwo310.tsukichat.common.converter;
 
 import org.junit.jupiter.api.Test;
 

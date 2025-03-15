@@ -145,15 +145,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-//    testImplementation platform('org.junit:junit-bom:5.10.2')
-//    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//    testImplementation 'org.slf4j:slf4j-api:2.0.9'
-//    testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.9'
-
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

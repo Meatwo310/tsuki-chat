@@ -1,4 +1,4 @@
-package io.github.meatwo310.tsukichat.common;
+package io.github.meatwo310.tsukichat.common.converter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,4 +6,7 @@ import org.slf4j.LoggerFactory;
 public class Converter {
     public static final String MODID = "tsukichat";
     private static final Logger LOGGER = LoggerFactory.getLogger(Converter.class);
+
+    private Converter() {
+    }
 }

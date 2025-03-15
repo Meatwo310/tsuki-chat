@@ -1,6 +1,7 @@
-package io.github.meatwo310.tsukichat.common;
+package io.github.meatwo310.tsukichat.common.converter;
 
 import io.github.meatwo310.tsukichat.TsukiChat;
+import io.github.meatwo310.tsukichat.common.TsukiChatUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
