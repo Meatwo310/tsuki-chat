@@ -14,6 +14,7 @@ import java.util.Map;
 public class RomajiKanaConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(RomajiKanaConverter.class);
     private static final String TABLE_PATH = "assets/%s/romaji_table.txt".formatted(Converter.MODID);
+    private static final int MAX_LENGTH = 4;
 
     static final Map<String, String> ROMAJI_TO_KANA = new HashMap<>();
     static final Map<String, Integer> ROMAJI_ROLLBACK = new HashMap<>();
@@ -66,6 +67,27 @@ public class RomajiKanaConverter {
         } catch (IOException e) {
             throw new TableLoadingException("Failed to load Romaji table", e);
         }
+    }
+
+    public static String convertToKana(String romaji) {
+        StringBuilder result = new StringBuilder();
+        final int length = romaji.length();
+        for (int i = 0; i < length;) {
+            int remaining = length - i;
+            for (int j = Math.min(MAX_LENGTH, remaining); j > 0; j--) {
+                String sub = romaji.substring(i, i + j);
+                if (ROMAJI_TO_KANA.containsKey(sub)) {
+                    result.append(ROMAJI_TO_KANA.get(sub));
+                    i += j;
+                    break;
+                }
+                if (j == 1) {
+                    result.append(romaji.charAt(i));
+                    i++;
+                }
+            }
+        }
+        return result.toString();
     }
 
     private static class TableNotFoundException extends RuntimeException {
