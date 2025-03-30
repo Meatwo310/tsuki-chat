@@ -168,6 +168,8 @@ dependencies {
     implementation fg.deobf("curse.maven:simple-discord-link-bot-forge-fabric-spigot-541320:5574099")
 //    compileOnly fg.deobf("curse.maven:simple-discord-link-bot-forge-fabric-spigot-541320:5574099")
 
+    runtimeOnly fg.deobf("curse.maven:modern-ui-352491:6199942")
+
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

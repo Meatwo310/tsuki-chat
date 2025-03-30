@@ -153,7 +153,7 @@ public class CommonConfigs {
     public static ForgeConfigSpec.ConfigValue<String> formatConverted = builder
             .comment("変換後のメッセージをどう表示するかを指定します。\n" +
                     "$0は変換後のメッセージに置き換えられます。")
-            .define("format_converted", "→ $0§r");
+            .define("format_converted", "→ $0");
     public static ForgeConfigSpec.ConfigValue<String> formatOriginalIgnored = builder
             .comment("コンフィグignoreで設定された接頭辞で始まるメッセージがMarkdown変換されなかった際にどう表示するかを指定します。\n" +
                     "$0は接頭辞、$1はメッセージのうち接頭辞以外の部分に置き換えられます。")
@@ -161,7 +161,7 @@ public class CommonConfigs {
     public static ForgeConfigSpec.ConfigValue<String> formatConvertedIgnored = builder
             .comment("コンフィグignoreで設定された接頭辞から始まるメッセージがMarkdown変換された際にどう表示するかを指定します。\n" +
                     "$0は接頭辞、$1は変換後のメッセージのうち接頭辞以外の部分に置き換えられます。")
-            .define("format_converted_ignored", "→ §7$0§r$1§r");
+            .define("format_converted_ignored", "→ §7$0§r$1");
 
     public static ForgeConfigSpec.ConfigValue<String> ignoreTag = builder
             .comment("TsukiChatは、以下のタグを持つプレイヤーのメッセージのローマ字変換や日本語変換を行いません。\n" +
