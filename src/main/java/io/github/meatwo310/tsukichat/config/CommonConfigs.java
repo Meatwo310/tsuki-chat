@@ -60,7 +60,7 @@ public class CommonConfigs {
             .defineList("ignore", List.of("#", ";"), o -> true);
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreCompletely = builder
             .comment("TsukiChatは、以下の接頭辞から始まるメッセージについて、一切の変換を行いません。")
-            .defineList("ignore_completely", List.of(":", "!", "./"), o -> true);
+            .defineList("ignore_completely", List.of(":", "./"), o -> true);
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> ignoreMessages = builder
             .comment("メッセージが以下のリストのいずれかと一致する場合、一切の変換を行いません。")
             .defineList("ignore_messages", List.of(
@@ -170,6 +170,27 @@ public class CommonConfigs {
     public static ForgeConfigSpec.ConfigValue<String> ignoreCompletelyTag = builder
             .comment("TsukiChatは、以下のタグを持つプレイヤーのメッセージについて、一切の変換を行いません。")
             .define("ignore_completely_tag", "tsukichat_ignore");
+
+    public static final ForgeConfigSpec.BooleanValue formatTeamMsg = builder
+            .comment("チームメッセージを変換するかどうか。")
+            .define("format_team_msg", true);
+
+    public static final ForgeConfigSpec.BooleanValue defaultTeamMsg = builder
+            .comment("""
+                    送信されたメッセージをデフォルトでチームメッセージとして送信するかどうか。
+                    チームに所属していない場合は機能しません。
+                    コンフィグforce_globalにマッチするメッセージはチームメッセージとして送信されません。""")
+            .define("default_team_msg", false);
+
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> forceGlobal = builder
+            .comment("TsukiChatは、以下の接頭辞から始まるメッセージを強制的にグローバルチャットとして扱います。\n" +
+                    "コンフィグdefault_team_msgが無効の場合は機能しません。")
+            .defineList("force_global", List.of("!"), o -> true);
+
+    public static final ForgeConfigSpec.IntValue forwardTeamMsgLevel = builder
+            .comment("すべてのチームメッセージを指定された権限レベルを持つプレイヤーへ転送します。\n" +
+                    "-1が指定されている場合、チームメッセージは転送されません。")
+            .defineInRange("forward_team_msg_level", -1, -1, Integer.MAX_VALUE);
 
     public static final ForgeConfigSpec COMMON_SPEC = builder.build();
 }
