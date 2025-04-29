@@ -77,7 +77,23 @@ public class ServerChat {
         ).toList();
         if (recipients.isEmpty()) return;
 
-        var chatMessage = PlayerChatMessage.unsigned(sender.getUUID(), message);
+        Set<String> playerTags = sender.getTags();
+
+        CompoundTag dict = PlayerNbtUtil.loadCompoundTag(sender, UserDictionaryCommand.KEY_NAME);
+        LinkedHashMap<String, String> userDictionary = new LinkedHashMap<>();
+        dict.getAllKeys().forEach(k -> userDictionary.put(k, dict.getString(k)));
+        var serverDictionary = ServerDictionaryCommand.getServerDictionary();
+
+        var result = ChatCustomizer.recognizeChat(message, playerTags, userDictionary, serverDictionary);
+
+//        result.ifMessagePresent(s -> event.setMessage(Component.literal(s)));
+//        result.ifDeferredMessagePresent(s ->
+//                player.server.getPlayerList().broadcastSystemMessage(Component.literal(s), false)
+//        );
+//
+//        var chatMessage = PlayerChatMessage.unsigned(sender.getUUID(), message);
+        var converted = result.getMessageSynced();
+        var chatMessage = PlayerChatMessage.unsigned(sender.getUUID(), converted == null ? message : converted);
         sendTeamMessage(sender, team, recipients, chatMessage);
     }
 

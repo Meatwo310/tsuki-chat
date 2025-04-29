@@ -44,4 +44,16 @@ public class CustomizedChat {
             }
         });
     }
+
+    public @Nullable String getMessageSynced() {
+        if (message != null) return message;
+        if (deferredMessage != null) {
+            try {
+                return deferredMessage.call();
+            } catch (Exception e) {
+                TsukiChat.LOGGER.error("Failed to get deferred message: ", e);
+            }
+        }
+        return null;
+    }
 }
