@@ -111,7 +111,8 @@ public class TeamMsgCommandMixin {
             value = "INVOKE",
             target = "net/minecraft/commands/arguments/MessageArgument.resolveChatMessage(" +
                     "Lcom/mojang/brigadier/context/CommandContext;" +
-                    "Ljava/lang/String;Ljava/util/function/Consumer;" +
+                    "Ljava/lang/String;" +
+                    "Ljava/util/function/Consumer;" +
                     ")V"),
             method = "lambda$register$2(" +
                     "Lcom/mojang/brigadier/context/CommandContext;" +
