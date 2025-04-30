@@ -29,6 +29,10 @@ public class TsukiChatCommand {
         return Component.literal(PLACEHOLDER + "§c" + String.join("", message));
     }
 
+    public static String boolToStr(boolean value) {
+        return value ? "§a有効§r" : "§c無効§r";
+    }
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tsukichat")
                 .then(Commands.literal("mode")
@@ -87,6 +91,13 @@ public class TsukiChatCommand {
                         .then(Commands.literal("allow_removing_server_dictionary")
                                 .then(Commands.argument("value", BoolArgumentType.bool())
                                         .executes(PermissionCommand::allowRemovingServerDictionary)))
+                ).then(Commands.literal("config")
+                        .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
+                        .then(Commands.literal("defaultTeamMsg")
+                                .then(Commands.argument("value", BoolArgumentType.bool())
+                                        .executes(ConfigCommand::defaultTeamMsg)
+                                ).executes(ConfigCommand::defaultTeamMsg)
+                        )
                 ).then(Commands.argument("arg", StringArgumentType.string())
                                 .executes((CustomCommand::execute)))
         );
