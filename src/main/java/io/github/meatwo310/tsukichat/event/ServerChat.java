@@ -8,9 +8,11 @@ import io.github.meatwo310.tsukichat.util.ChatCustomizer;
 import io.github.meatwo310.tsukichat.util.PlayerNbtUtil;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.OutgoingChatMessage;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.commands.TeamMsgCommand;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.Entity;
@@ -86,12 +88,6 @@ public class ServerChat {
 
         var result = ChatCustomizer.recognizeChat(message, playerTags, userDictionary, serverDictionary);
 
-//        result.ifMessagePresent(s -> event.setMessage(Component.literal(s)));
-//        result.ifDeferredMessagePresent(s ->
-//                player.server.getPlayerList().broadcastSystemMessage(Component.literal(s), false)
-//        );
-//
-//        var chatMessage = PlayerChatMessage.unsigned(sender.getUUID(), message);
         var converted = result.getMessageSynced();
         var chatMessage = PlayerChatMessage.unsigned(sender.getUUID(), converted == null ? message : converted);
         sendTeamMessage(sender, team, recipients, chatMessage);
