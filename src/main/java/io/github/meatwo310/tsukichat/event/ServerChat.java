@@ -6,13 +6,14 @@ import io.github.meatwo310.tsukichat.commands.UserDictionaryCommand;
 import io.github.meatwo310.tsukichat.config.CommonConfigs;
 import io.github.meatwo310.tsukichat.util.ChatCustomizer;
 import io.github.meatwo310.tsukichat.util.PlayerNbtUtil;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.commands.TeamMsgCommand;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.event.ServerChatEvent;
@@ -20,12 +21,20 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+@ParametersAreNonnullByDefault
+@FieldsAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = TsukiChat.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerChat {
+    private static final Style TEAMMSG_SUGGEST_STYLE = Style.EMPTY
+            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.type.team.hover")))
+            .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/teammsg "));
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onChat(ServerChatEvent event) {
         ServerPlayer player = event.getPlayer();
@@ -85,43 +94,31 @@ public class ServerChat {
         var serverDictionary = ServerDictionaryCommand.getServerDictionary();
 
         var result = ChatCustomizer.recognizeChat(message, playerTags, userDictionary, serverDictionary);
-
-//        result.ifMessagePresent(s -> event.setMessage(Component.literal(s)));
-//        result.ifDeferredMessagePresent(s ->
-//                player.server.getPlayerList().broadcastSystemMessage(Component.literal(s), false)
-//        );
-//
-//        var chatMessage = PlayerChatMessage.unsigned(sender.getUUID(), message);
         var converted = result.getMessageSynced();
-        var chatMessage = PlayerChatMessage.unsigned(sender.getUUID(), converted == null ? message : converted);
-        sendTeamMessage(sender, team, recipients, chatMessage);
+        sendTeamMessage(server, sender, team, recipients, converted == null ? message : converted);
     }
 
+    public static void sendTeamMessage(MinecraftServer server, ServerPlayer sender, PlayerTeam team, List<ServerPlayer> recipients, String message) {
+        int forwardLevel = CommonConfigs.forwardTeamMsgLevel.get();
+        ArrayList<ServerPlayer> listModified = new ArrayList<>(recipients);
+        if (forwardLevel >= 0) listModified.addAll(server.getPlayerList().getPlayers().stream()
+                .filter(player -> player.hasPermissions(forwardLevel) && !listModified.contains(player))
+                .toList()
+        );
 
-    private static void sendTeamMessage(ServerPlayer sender, PlayerTeam team, List<ServerPlayer> recipients, PlayerChatMessage chatMessage) {
-        Component teamDisplayName = team.getFormattedDisplayName();
-        Component senderName = sender.getDisplayName();
-        RegistryAccess.Frozen registryAccess = sender.server.registryAccess();
-        ChatType.Bound incomingChatType = ChatType.bind(ChatType.TEAM_MSG_COMMAND_INCOMING, registryAccess, senderName).withTargetName(teamDisplayName);
-        ChatType.Bound outgoingChatType = ChatType.bind(ChatType.TEAM_MSG_COMMAND_OUTGOING, registryAccess, senderName).withTargetName(teamDisplayName);
-        OutgoingChatMessage outgoingMessage = OutgoingChatMessage.create(chatMessage);
-        boolean anyMessageFullyFiltered = false;
+        var teamComponent = team.getFormattedDisplayName().withStyle(TEAMMSG_SUGGEST_STYLE);
+        var senderComponent = sender.getDisplayName();
+        var component = Component
+                .literal("-> ")
+                .append(teamComponent)
+                .append(" <")
+                .append(senderComponent)
+                .append("> ")
+                .append(message);
 
-        for (ServerPlayer recipient : recipients) {
-            var chatType = recipient == sender ? outgoingChatType : incomingChatType;
-            boolean shouldFilter = shouldFilterMessage(sender, recipient);
-            recipient.sendChatMessage(outgoingMessage, shouldFilter, chatType);
-            anyMessageFullyFiltered |= shouldFilter && chatMessage.isFullyFiltered();
+        for (ServerPlayer serverPlayer : listModified) {
+            serverPlayer.sendSystemMessage(component);
         }
-
-        if (anyMessageFullyFiltered) {
-            sender.sendSystemMessage(PlayerList.CHAT_FILTERED_FULL);
-        }
-    }
-
-    private static boolean shouldFilterMessage(ServerPlayer sender, ServerPlayer recipient) {
-        if (sender == recipient) return false;
-        return sender != null && sender.isTextFilteringEnabled() || recipient.isTextFilteringEnabled();
     }
 
     private static class NotOnTeamException extends RuntimeException {
