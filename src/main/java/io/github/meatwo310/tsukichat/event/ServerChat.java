@@ -79,9 +79,7 @@ public class ServerChat {
         if (server == null) return;
 
         List<ServerPlayer> players = server.getPlayerList().getPlayers();
-        List<ServerPlayer> recipients = CommonConfigs.defaultTeamMsg.get() ? players.stream().filter(player ->
-                player == sender || player.getTeam() == team || player.hasPermissions(CommonConfigs.forwardTeamMsgLevel.get())
-        ).toList() : players.stream().filter(player ->
+        List<ServerPlayer> recipients = players.stream().filter(player ->
                 player == sender || player.getTeam() == team
         ).toList();
         if (recipients.isEmpty()) return;
