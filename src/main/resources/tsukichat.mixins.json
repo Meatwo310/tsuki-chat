@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.meatwo310.tsukichat.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SDLinkServerEventsMixin",
+    "TeamMsgCommandMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
