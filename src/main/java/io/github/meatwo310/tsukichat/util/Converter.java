@@ -137,8 +137,10 @@ public class Converter {
     private static String hiraganaPartsToJapanese(String hiragana) {
         try {
             // GoogleのAPIを使って変換
-            URI uri = new URI("https://www.google.com/transliterate?langpair=ja-Hira|ja&text=" +
-                    URLEncoder.encode(hiragana, StandardCharsets.UTF_8));
+            String encodedUrl = "https://www.google.com/transliterate?langpair=" +
+                    URLEncoder.encode("ja-Hira|ja", StandardCharsets.UTF_8) +
+                    "&text=" + URLEncoder.encode(hiragana, StandardCharsets.UTF_8);
+            URI uri = URI.create(encodedUrl);
             HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
             conn.setRequestMethod("GET");
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
