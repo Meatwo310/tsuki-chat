@@ -13,69 +13,15 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class Converter {
-    /**
-     * ローマ字からひらがなへの変換テーブル。
-     * キーにローマ字、値にひらがなと巻き戻り数を持つ
-     */
-    private static final LinkedHashMap<String, String[]> hiraganaMap = new LinkedHashMap<>();
     private static final Logger LOGGER = TsukiChat.LOGGER;
-
-    /**
-     * ひらがな変換テーブルを初期化する
-     * @param resourceName リソース名
-     */
-    private static void initMap(String resourceName) {
-        URL pathToTable = Converter.class.getResource(resourceName);
-
-        if (Objects.isNull(pathToTable)) {
-            System.out.println("Could not find resource: " + resourceName);
-            return;
-        }
-
-        // テーブルを読み込む
-        try (java.io.InputStream stream = pathToTable.openStream()) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.isBlank()) continue;
-                String[] parts = line.split(":"); // 0: ローマ字, 1: ひらがな, 2: 巻き戻り数
-                String romaji = parts[0];
-                String hiragana = parts[1];
-                String back;
-
-                if (parts.length == 2) { // ローマ字+ひらがな
-                    back = "0";
-                } else if (parts.length == 3) { // ローマ字+ひらがな+巻き戻り数
-                    // Int型に変換可能か確認
-                    try {
-                        Integer.parseInt(parts[2]);
-                    } catch (Exception e) {
-                        LOGGER.warn("Could not parse int in {}; This line will be ignored: {}", resourceName, line);
-                        continue;
-                    }
-                    back = parts[2];
-                } else {
-                    LOGGER.warn("Invalid line in {}; This line will be ignored: {}", resourceName, line);
-                    continue;
-                }
-
-                // ローマ字をキーにしてひらがなと巻き戻り数を保存
-                hiraganaMap.put(romaji, new String[]{hiragana, back});
-            }
-        } catch (java.io.IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    static {
-        initMap("/assets/japaneseromajiconverter/romaji_to_hiragana.txt");
-    }
+    private static final RomajiToHiragana ROMAJI_TO_HIRAGANA = RomajiToHiragana.fromResource(
+            "/assets/japaneseromajiconverter/romaji_to_hiragana.txt",
+            LOGGER::warn
+    );
 
     /**
      * ローマ字をひらがなに変換する
@@ -83,27 +29,7 @@ public class Converter {
      * @return ひらがな
      */
     public static String romajiToHiragana(String romaji) {
-        StringBuilder hiragana = new StringBuilder();
-        int i = 0;
-        while (i < romaji.length()) {
-            boolean found = false;
-            //           ↓ MAGIC NUMBER !!!!
-            for (int j = 4; j >= 1; j--) {
-                if (!(i + j <= romaji.length())) continue;
-                String substring = romaji.substring(i, i + j);
-
-                if (!hiraganaMap.containsKey(substring)) continue;
-                hiragana.append(hiraganaMap.get(substring)[0]);
-                i += j + Integer.parseInt(hiraganaMap.get(substring)[1]);
-                found = true;
-                break;
-            }
-            if (!found) {
-                hiragana.append(romaji.charAt(i));
-                i++;
-            }
-        }
-        return hiragana.toString();
+        return ROMAJI_TO_HIRAGANA.convert(romaji);
     }
 
     /**

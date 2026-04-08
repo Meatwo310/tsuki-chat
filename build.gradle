@@ -171,6 +171,9 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:modern-ui-352491:6199942")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 mixin {
@@ -239,6 +242,10 @@ tasks.named('jar', Jar).configure {
 //        }
 //    }
 //}
+
+test {
+    useJUnitPlatform()
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
