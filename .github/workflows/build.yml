@@ -1,0 +1,136 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      matrix: ${{ steps.detect.outputs.matrix }}
+      count: ${{ steps.detect.outputs.count }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup JDK 25
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Detect subprojects with Gradle
+        id: detect
+        run: |
+          chmod u+x ./gradlew
+          ./gradlew --configuration-cache --no-daemon writeCiBuildMatrix
+          JSON=$(<build/ci/build-matrix.json)
+          echo "matrix=$(jq -c '.' <<< "$JSON")" >> "$GITHUB_OUTPUT"
+          echo "count=$(jq 'length' <<< "$JSON")" >> "$GITHUB_OUTPUT"
+          echo "::group::Platform projects"
+          jq . <<< "$JSON"
+          echo "::endgroup::"
+
+  build:
+    needs: detect
+    if: ${{ needs.detect.outputs.count != '0' }}
+    name: build (${{ matrix.subproject }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.detect.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup JDK 25
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build with Gradle
+        run: chmod u+x ./gradlew && ./gradlew ":${{ matrix.subproject }}:build"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            ${{ matrix.subproject }}/build/libs/
+            ${{ matrix.subproject }}/build/runtimeMods/
+          name: artifact-${{ matrix.subproject }}
+
+      # Fabric Game Tests are run implicitly by the build task.
+      - name: Run NeoForge/Forge Game Tests
+        if: ${{ matrix.run_game_test_server }}
+        timeout-minutes: 10
+        run: ./gradlew ":${{ matrix.subproject }}:runGameTestServer"
+
+      - name: Run Server
+        if: ${{ matrix.run_server }}
+        timeout-minutes: 10
+        run: |
+          mkdir -p "${{ matrix.subproject }}/run"
+          printf 'eula=true\n' > "${{ matrix.subproject }}/run/eula.txt"
+          echo stop | ./gradlew ":${{ matrix.subproject }}:runServer"
+
+      - name: Setup runtime JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Stage mod for runtime test client
+        run: |
+          mkdir -p run/mods
+          find "${{ matrix.subproject }}/build/libs" -maxdepth 1 -type f -name '*.jar' \
+            ! -name '*-sources.jar' \
+            ! -name '*-javadoc.jar' \
+            ! -name '*-dev.jar' \
+            -exec cp {} run/mods/ \;
+          if [[ -d "${{ matrix.subproject }}/build/runtimeMods" ]]; then
+            find "${{ matrix.subproject }}/build/runtimeMods" -maxdepth 1 -type f -name '*.jar' \
+              -exec cp {} run/mods/ \;
+          fi
+          test -n "$(find run/mods -maxdepth 1 -type f -name '*.jar' -print -quit)"
+          ls -la run/mods
+
+      - name: Run MC runtime test client
+        timeout-minutes: 10
+        uses: headlesshq/mc-runtime-test@4.4.0
+        with:
+          mc: ${{ matrix.minecraft }}
+          modloader: ${{ matrix.modloader }}
+          regex: ${{ matrix.artifact_regex }}
+          mc-runtime-test: ${{ matrix.mc_runtime_test }}
+          java: ${{ matrix.java }}
+          fabric-api: ${{ matrix.fabric_api }}
