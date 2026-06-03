@@ -3,8 +3,7 @@ package net.meatwo310.tsukichat.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import net.meatwo310.tsukichat.ModMain;
-import org.slf4j.Logger;
+import net.meatwo310.tsukichat.Constants;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,7 +23,6 @@ public class Converter {
      * キーにローマ字、値にひらがなと巻き戻り数を持つ
      */
     private static final LinkedHashMap<String, String[]> hiraganaMap = new LinkedHashMap<>();
-    private static final Logger LOGGER = ModMain.LOGGER;
 
     /**
      * ひらがな変換テーブルを初期化する
@@ -56,12 +54,12 @@ public class Converter {
                     try {
                         Integer.parseInt(parts[2]);
                     } catch (Exception e) {
-                        LOGGER.warn("Could not parse int in {}; This line will be ignored: {}", resourceName, line);
+                        Constants.LOGGER.warn("Could not parse int in {}; This line will be ignored: {}", resourceName, line);
                         continue;
                     }
                     back = parts[2];
                 } else {
-                    LOGGER.warn("Invalid line in {}; This line will be ignored: {}", resourceName, line);
+                    Constants.LOGGER.warn("Invalid line in {}; This line will be ignored: {}", resourceName, line);
                     continue;
                 }
 
@@ -74,7 +72,7 @@ public class Converter {
     }
 
     static {
-        initMap("/assets/japaneseromajiconverter/romaji_to_hiragana.txt");
+        initMap("/assets/tsukichat/romaji_to_hiragana.txt");
     }
 
     /**
@@ -165,7 +163,7 @@ public class Converter {
                     .matcher(result)
                     .replaceAll(m -> String.valueOf((char) (m.group().charAt(0) - 0xFEE0)));
         } catch (Exception e) {
-            LOGGER.error("Error during conversion to Japanese: ", e);
+            Constants.LOGGER.error("Error during conversion to Japanese: ", e);
             return hiragana + " §8(エラー)§r";
         }
     }

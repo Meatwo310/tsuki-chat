@@ -1,6 +1,6 @@
 package net.meatwo310.tsukichat.util;
 
-import net.meatwo310.tsukichat.ModMain;
+import net.meatwo310.tsukichat.Constants;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Callable;
@@ -40,7 +40,7 @@ public class CustomizedChat {
             try {
                 asyncConsumer.accept(deferredMessage.call());
             } catch (Exception e) {
-                ModMain.LOGGER.error("Failed to get deferred message: ", e);
+                Constants.LOGGER.error("Failed to get deferred message: ", e);
             }
         });
     }
@@ -51,7 +51,7 @@ public class CustomizedChat {
             try {
                 return deferredMessage.call();
             } catch (Exception e) {
-                ModMain.LOGGER.error("Failed to get deferred message: ", e);
+                Constants.LOGGER.error("Failed to get deferred message: ", e);
             }
         }
         return null;

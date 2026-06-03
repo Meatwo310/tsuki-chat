@@ -1,5 +1,6 @@
 package net.meatwo310.tsukichat.event;
 
+import net.meatwo310.tsukichat.Constants;
 import net.meatwo310.tsukichat.ModMain;
 import net.meatwo310.tsukichat.compat.mohist.MohistHelper;
 import net.meatwo310.tsukichat.config.CommonConfigs;
@@ -16,7 +17,7 @@ public class MohistCompatPluginChecker {
         if (!CommonConfigs.mohistCompat.get()) return;
 
         if (MohistHelper.isCompatPluginLoaded()) {
-            ModMain.LOGGER.info("Mohist compat plugin is loaded! Proceeding...");
+            Constants.LOGGER.info("Mohist compat plugin is loaded! Proceeding...");
         } else {
             throw new IllegalStateException("Forge's ServerChatEvent is NOT compatible with Mohist! " +
                     "Install the compat plugin at https://github.com/Meatwo310/tsuki-chat/blob/main/mohist-compat.md ! " +
