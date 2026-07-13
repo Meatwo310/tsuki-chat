@@ -23,45 +23,45 @@ fun includeMc(minecraftVersion: String, kind: String) {
 }
 
 /// 1.18.2 ///
-includeMc("1.18.2", "common")
-includeMc("1.18.2", "forge")
+// includeMc("1.18.2", "common")
+// includeMc("1.18.2", "forge")
 
 /// 1.19.2 ///
-includeMc("1.19.2", "common")
-includeMc("1.19.2", "forge")
+// includeMc("1.19.2", "common")
+// includeMc("1.19.2", "forge")
 
 /// 1.20.1 ///
 includeMc("1.20.1", "common")
 includeMc("1.20.1", "forge")
-includeMc("1.20.1", "fabric")
+// includeMc("1.20.1", "fabric")
 
 /// 1.21.1 ///
-includeMc("1.21.1", "common")
-includeMc("1.21.1", "neo")
-includeMc("1.21.1", "fabric")
+// includeMc("1.21.1", "common")
+// includeMc("1.21.1", "neo")
+// includeMc("1.21.1", "fabric")
 
 /// 1.21.8 ///
-includeMc("1.21.8", "common")
-includeMc("1.21.8", "fabric")
+// includeMc("1.21.8", "common")
+// includeMc("1.21.8", "fabric")
 
 /// 1.21.11 ///
-includeMc("1.21.11", "common")
-includeMc("1.21.11", "fabric")
+// includeMc("1.21.11", "common")
+// includeMc("1.21.11", "fabric")
 
 /// 26.1 ///
-includeMc("26.1", "common")
-includeMc("26.1", "fabric")
-includeMc("26.1", "neo")
+// includeMc("26.1", "common")
+// includeMc("26.1", "fabric")
+// includeMc("26.1", "neo")
 
 /// 26.1.2 ///
 includeMc("26.1.2", "common")
-includeMc("26.1.2", "fabric")
+// includeMc("26.1.2", "fabric")
 includeMc("26.1.2", "neo")
 
 /// 26.2 ///
-includeMc("26.2", "common")
-includeMc("26.2", "fabric")
-includeMc("26.2", "neo")
+// includeMc("26.2", "common")
+// includeMc("26.2", "fabric")
+// includeMc("26.2", "neo")
 
 val ciBuildProjectNames = rootProject.children
     .map { it.name }
