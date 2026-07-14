@@ -5,6 +5,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 plugins {
     id("net.fabricmc.fabric-loom") apply false
     id("net.fabricmc.fabric-loom-remap") apply false
+    id("net.minecraftforge.gradle") apply false
     id("net.neoforged.moddev") apply false
     id("net.neoforged.moddev.legacyforge") apply false
 }
@@ -105,7 +106,7 @@ val modVersion = providers.fileContents(layout.projectDirectory.file("version.tx
     .get()
 
 subprojects {
-    val modGroupId: String by project
+    val modGroupId = project.property("modGroupId").toString()
 
     extensions.extraProperties["modVersion"] = modVersion
     version = modVersion
@@ -116,6 +117,16 @@ subprojects {
     }
 
     repositories {
+        maven {
+            name = "Minecraft Libraries"
+            url = uri("https://libraries.minecraft.net")
+        }
+
+        maven {
+            name = "MinecraftForge"
+            url = uri("https://maven.minecraftforge.net/")
+        }
+
         mavenCentral()
 
 //        flatDir {

@@ -1,10 +1,10 @@
 import net.meatwo310.mdk.build.*
 
-val minecraftVersion: String by project
+val minecraftVersion = project.property("minecraftVersion").toString()
 
 plugins.withId("java-library") {
     val config = configureConfigSourceSet()
-    val sharedConfig = sharedConfigSourceSetsWithOptionalVersion(minecraftVersion, "legacyforge-config-conventions")
+    val sharedConfig = sharedConfigSourceSetsWithOptionalVersion(minecraftVersion, "lexforge-legacy-config-conventions")
 
     config.addConfigClasspath(sharedConfig)
 
