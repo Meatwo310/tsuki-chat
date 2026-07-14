@@ -1,8 +1,8 @@
-package net.meatwo310.examplemod;
+package net.meatwo310.tsukichat;
 
-import net.meatwo310.examplemod.config.ModConfigs;
-import net.meatwo310.examplemod.mdk.config.PlatformConfigRegistrar;
-import net.meatwo310.examplemod.mdk.config.VersionedConfigSpec;
+import net.meatwo310.tsukichat.config.ModConfigs;
+import net.meatwo310.tsukichat.mdk.config.PlatformConfigRegistrar;
+import net.meatwo310.tsukichat.mdk.config.VersionedConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 

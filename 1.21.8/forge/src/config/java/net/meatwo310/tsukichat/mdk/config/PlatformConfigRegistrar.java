@@ -1,4 +1,4 @@
-package net.meatwo310.examplemod.mdk.config;
+package net.meatwo310.tsukichat.mdk.config;
 
 import fuzs.forgeconfigapiport.forge.api.v5.NeoForgeConfigRegistry;
 import net.minecraftforge.fml.ModContainer;

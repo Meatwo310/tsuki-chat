@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.meatwo310.examplemod.mixin",
+  "package": "net.meatwo310.tsukichat.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "injectors": {
